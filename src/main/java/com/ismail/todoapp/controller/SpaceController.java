@@ -1,5 +1,6 @@
 package com.ismail.todoapp.controller;
 
+import com.ismail.todoapp.config.StandardAccessErrorResponses;
 import com.ismail.todoapp.dto.space.SpaceCreateRequest;
 import com.ismail.todoapp.dto.space.SpaceMemberRequest;
 import com.ismail.todoapp.dto.space.SpaceMemberResponse;
@@ -7,7 +8,6 @@ import com.ismail.todoapp.dto.space.SpaceResponse;
 import com.ismail.todoapp.dto.space.SpaceUpdateRequest;
 import com.ismail.todoapp.dto.user.UserSearchResponse;
 import com.ismail.todoapp.entity.Space;
-import com.ismail.todoapp.enums.SpaceRole;
 import com.ismail.todoapp.service.SpaceService;
 import com.ismail.todoapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -75,10 +75,9 @@ public class SpaceController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Çalışma alanı detayları getirildi",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = SpaceResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = SpaceResponse.class)))
     })
+    @StandardAccessErrorResponses
     @GetMapping("/{spaceId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
     public ResponseEntity<SpaceResponse> getSpace(
@@ -94,10 +93,9 @@ public class SpaceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Çalışma alanı başarıyla güncellendi",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SpaceResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Bu alanı güncelleme yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content)
     })
+    @StandardAccessErrorResponses
     @PatchMapping("/{spaceId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'ADMIN')")
     public ResponseEntity<SpaceResponse> updateSpace(
@@ -113,10 +111,9 @@ public class SpaceController {
             description = "Çalışma alanını ve içindeki tüm görevleri kalıcı olarak siler. Sadece OWNER yetkisi ile yapılabilir."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Çalışma alanı başarıyla silindi"),
-            @ApiResponse(responseCode = "403", description = "Bu alanı silme yetkiniz yok (OWNER gerekli)", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
+            @ApiResponse(responseCode = "204", description = "Çalışma alanı başarıyla silindi")
     })
+    @StandardAccessErrorResponses
     @DeleteMapping("/{spaceId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'OWNER')")
     public ResponseEntity<Void> deleteSpace(
@@ -134,10 +131,9 @@ public class SpaceController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Üyeler başarıyla listelendi",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpaceMemberResponse.class)))),
-            @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = SpaceMemberResponse.class))))
     })
+    @StandardAccessErrorResponses
     @GetMapping("/{spaceId}/members")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
     public ResponseEntity<List<SpaceMemberResponse>> getMembers(
@@ -154,10 +150,9 @@ public class SpaceController {
             @ApiResponse(responseCode = "201", description = "Üye başarıyla eklendi",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SpaceMemberResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Üye ekleme yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Kullanıcı veya çalışma alanı bulunamadı", content = @Content),
             @ApiResponse(responseCode = "409", description = "Kullanıcı zaten üye", content = @Content)
     })
+    @StandardAccessErrorResponses
     @PostMapping("/{spaceId}/members")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'ADMIN')")
     public ResponseEntity<SpaceMemberResponse> addMember(
@@ -176,9 +171,8 @@ public class SpaceController {
             @ApiResponse(responseCode = "200", description = "Üye rolü başarıyla güncellendi",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = SpaceMemberResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz rol veya OWNER değiştirilemez", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Rol güncelleme yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Üye bulunamadı", content = @Content)
     })
+    @StandardAccessErrorResponses
     @PatchMapping("/{spaceId}/members/{memberId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'ADMIN')")
     public ResponseEntity<SpaceMemberResponse> updateMemberRole(
@@ -198,9 +192,8 @@ public class SpaceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Üye başarıyla çıkarıldı"),
             @ApiResponse(responseCode = "400", description = "OWNER çıkarılamaz", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Üye çıkarma yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Üye bulunamadı", content = @Content)
     })
+    @StandardAccessErrorResponses
     @DeleteMapping("/{spaceId}/members/{memberId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'ADMIN')")
     public ResponseEntity<Void> removeMember(

@@ -1,5 +1,6 @@
 package com.ismail.todoapp.controller;
 
+import com.ismail.todoapp.config.StandardAccessErrorResponses;
 import com.ismail.todoapp.dto.task.TaskCreateRequest;
 import com.ismail.todoapp.dto.task.TaskResponse;
 import com.ismail.todoapp.dto.task.TaskUpdateRequest;
@@ -34,10 +35,9 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Görevler başarıyla listelendi",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponse.class)))),
-            @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponse.class))))
     })
+    @StandardAccessErrorResponses
     @GetMapping
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
     public ResponseEntity<List<TaskResponse>> getTasksBySpace(
@@ -52,10 +52,9 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Görev başarıyla getirildi",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
-            @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Görev bulunamadı", content = @Content)
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class)))
     })
+    @StandardAccessErrorResponses
     @GetMapping("/{taskId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
     public ResponseEntity<TaskResponse> getTaskById(
@@ -74,9 +73,8 @@ public class TaskController {
             @ApiResponse(responseCode = "201", description = "Görev başarıyla oluşturuldu",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Bu alanda görev oluşturma yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
     })
+    @StandardAccessErrorResponses
     @PostMapping
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
     public ResponseEntity<TaskResponse> createTask(
@@ -95,9 +93,8 @@ public class TaskController {
             @ApiResponse(responseCode = "200", description = "Görev başarıyla güncellendi",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
-            @ApiResponse(responseCode = "403", description = "Bu görevi güncelleme yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Görev bulunamadı", content = @Content)
     })
+    @StandardAccessErrorResponses
     @PatchMapping("/{taskId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
     public ResponseEntity<TaskResponse> patchTask(
@@ -114,10 +111,9 @@ public class TaskController {
             description = "Belirtilen görevi kalıcı olarak siler. ADMIN ve üstü yetki gerektirir."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Görev başarıyla silindi"),
-            @ApiResponse(responseCode = "403", description = "Bu görevi silme yetkiniz yok", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Görev bulunamadı", content = @Content)
+            @ApiResponse(responseCode = "204", description = "Görev başarıyla silindi")
     })
+    @StandardAccessErrorResponses
     @DeleteMapping("/{taskId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'ADMIN')")
     public ResponseEntity<Void> deleteTask(
