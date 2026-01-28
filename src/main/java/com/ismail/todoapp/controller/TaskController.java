@@ -1,8 +1,8 @@
 package com.ismail.todoapp.controller;
 
-import com.ismail.todoapp.dto.TaskCreateRequest;
-import com.ismail.todoapp.dto.TaskUpdateRequest;
-import com.ismail.todoapp.entity.Task;
+import com.ismail.todoapp.dto.task.TaskCreateRequest;
+import com.ismail.todoapp.dto.task.TaskResponse;
+import com.ismail.todoapp.dto.task.TaskUpdateRequest;
 import com.ismail.todoapp.service.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,13 +34,13 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Görevler başarıyla listelendi",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Task.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponse.class)))),
             @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
             @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
     })
     @GetMapping
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
-    public ResponseEntity<List<Task>> getTasksBySpace(
+    public ResponseEntity<List<TaskResponse>> getTasksBySpace(
             @Parameter(description = "Çalışma alanı ID'si", required = true)
             @PathVariable Long spaceId) {
         return ResponseEntity.ok(taskService.getTasksBySpaceId(spaceId));
@@ -52,13 +52,13 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Görev başarıyla getirildi",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
             @ApiResponse(responseCode = "403", description = "Bu alana erişim yetkiniz yok", content = @Content),
             @ApiResponse(responseCode = "404", description = "Görev bulunamadı", content = @Content)
     })
     @GetMapping("/{taskId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
-    public ResponseEntity<Task> getTaskById(
+    public ResponseEntity<TaskResponse> getTaskById(
             @Parameter(description = "Çalışma alanı ID'si", required = true)
             @PathVariable Long spaceId,
             @Parameter(description = "Görev ID'si", required = true)
@@ -72,14 +72,14 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Görev başarıyla oluşturuldu",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
             @ApiResponse(responseCode = "403", description = "Bu alanda görev oluşturma yetkiniz yok", content = @Content),
             @ApiResponse(responseCode = "404", description = "Çalışma alanı bulunamadı", content = @Content)
     })
     @PostMapping
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
-    public ResponseEntity<Task> createTask(
+    public ResponseEntity<TaskResponse> createTask(
             @Parameter(description = "Çalışma alanı ID'si", required = true)
             @PathVariable Long spaceId,
             @RequestBody TaskCreateRequest request) {
@@ -93,14 +93,14 @@ public class TaskController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Görev başarıyla güncellendi",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Task.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
             @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),
             @ApiResponse(responseCode = "403", description = "Bu görevi güncelleme yetkiniz yok", content = @Content),
             @ApiResponse(responseCode = "404", description = "Görev bulunamadı", content = @Content)
     })
     @PatchMapping("/{taskId}")
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
-    public ResponseEntity<Task> patchTask(
+    public ResponseEntity<TaskResponse> patchTask(
             @Parameter(description = "Çalışma alanı ID'si", required = true)
             @PathVariable Long spaceId,
             @Parameter(description = "Görev ID'si", required = true)

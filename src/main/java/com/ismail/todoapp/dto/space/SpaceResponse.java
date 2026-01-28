@@ -1,4 +1,4 @@
-package com.ismail.todoapp.dto;
+package com.ismail.todoapp.dto.space;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,3 +15,4 @@ public class SpaceResponse {
     private String description;
     private List<SpaceMemberResponse> members;
 }
+

@@ -1,6 +1,10 @@
 package com.ismail.todoapp.service;
 
-import com.ismail.todoapp.dto.*;
+import com.ismail.todoapp.dto.space.SpaceCreateRequest;
+import com.ismail.todoapp.dto.space.SpaceMemberRequest;
+import com.ismail.todoapp.dto.space.SpaceMemberResponse;
+import com.ismail.todoapp.dto.space.SpaceResponse;
+import com.ismail.todoapp.dto.space.SpaceUpdateRequest;
 import com.ismail.todoapp.entity.Space;
 import com.ismail.todoapp.entity.SpaceMember;
 import com.ismail.todoapp.entity.User;

@@ -1,4 +1,4 @@
-package com.ismail.todoapp.dto;
+package com.ismail.todoapp.dto.space;
 
 import com.ismail.todoapp.enums.SpaceRole;
 import lombok.Builder;
@@ -14,3 +14,4 @@ public class SpaceMemberResponse {
     private String username;
     private SpaceRole role;
 }
+

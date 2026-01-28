@@ -1,7 +1,7 @@
 package com.ismail.todoapp.service;
 
 
-import com.ismail.todoapp.dto.AuthRequest;
+import com.ismail.todoapp.dto.auth.AuthRequest;
 import com.ismail.todoapp.entity.User;
 import com.ismail.todoapp.exception.BadRequestException;
 import com.ismail.todoapp.exception.ConflictException;

@@ -1,4 +1,4 @@
-package com.ismail.todoapp.dto;
+package com.ismail.todoapp.dto.user;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,3 +11,4 @@ public class UserSearchResponse {
     private Long id;
     private String username;
 }
+

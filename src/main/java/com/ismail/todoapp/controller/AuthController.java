@@ -1,7 +1,7 @@
 package com.ismail.todoapp.controller;
 
 
-import com.ismail.todoapp.dto.AuthRequest;
+import com.ismail.todoapp.dto.auth.AuthRequest;
 import com.ismail.todoapp.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

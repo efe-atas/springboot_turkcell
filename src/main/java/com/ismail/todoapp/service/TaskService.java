@@ -1,7 +1,8 @@
 package com.ismail.todoapp.service;
 
-import com.ismail.todoapp.dto.TaskCreateRequest;
-import com.ismail.todoapp.dto.TaskUpdateRequest;
+import com.ismail.todoapp.dto.task.TaskCreateRequest;
+import com.ismail.todoapp.dto.task.TaskResponse;
+import com.ismail.todoapp.dto.task.TaskUpdateRequest;
 import com.ismail.todoapp.entity.Space;
 import com.ismail.todoapp.entity.Task;
 import com.ismail.todoapp.entity.User;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -23,12 +25,14 @@ public class TaskService {
     private final UserService userService;
 
     // 1. Bir Space icindeki tum gorevleri getir
-    public List<Task> getTasksBySpaceId(Long spaceId) {
-        return taskRepository.findBySpaceId(spaceId);
+    public List<TaskResponse> getTasksBySpaceId(Long spaceId) {
+        return taskRepository.findBySpaceId(spaceId).stream()
+                .map(this::toTaskResponse)
+                .collect(Collectors.toList());
     }
 
     // 1.5. Tek bir gorevi getir
-    public Task getTaskById(Long spaceId, Long taskId) {
+    public TaskResponse getTaskById(Long spaceId, Long taskId) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gorev", taskId));
 
@@ -36,11 +40,11 @@ public class TaskService {
             throw new BadRequestException("Bu gorev bu calisma alanina ait degil");
         }
 
-        return task;
+        return toTaskResponse(task);
     }
 
     // 2. Yeni Task olustur ve Space'e bagla
-    public Task createTask(Long spaceId, TaskCreateRequest request) {
+    public TaskResponse createTask(Long spaceId, TaskCreateRequest request) {
         Space space = spaceRepository.findById(spaceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Space", spaceId));
 
@@ -53,11 +57,12 @@ public class TaskService {
         task.setCreatedBy(user);
         task.setCompleted(false);
 
-        return taskRepository.save(task);
+        Task savedTask = taskRepository.save(task);
+        return toTaskResponse(savedTask);
     }
 
     // 3. PATCH Mantigi: Sadece gelen (null olmayan) alanlari guncelle
-    public Task patchTask(Long spaceId, Long taskId, TaskUpdateRequest request) {
+    public TaskResponse patchTask(Long spaceId, Long taskId, TaskUpdateRequest request) {
         Task existingTask = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Gorev", taskId));
 
@@ -77,7 +82,8 @@ public class TaskService {
             existingTask.setCompleted(request.getCompleted());
         }
 
-        return taskRepository.save(existingTask);
+        Task updatedTask = taskRepository.save(existingTask);
+        return toTaskResponse(updatedTask);
     }
 
     // 4. Silme Islemi
@@ -90,5 +96,17 @@ public class TaskService {
         }
 
         taskRepository.delete(task);
+    }
+
+    private TaskResponse toTaskResponse(Task task) {
+        return TaskResponse.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .completed(task.isCompleted())
+                .spaceId(task.getSpace() != null ? task.getSpace().getId() : null)
+                .createdById(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null)
+                .assigneeId(task.getAssignee() != null ? task.getAssignee().getId() : null)
+                .build();
     }
 }
