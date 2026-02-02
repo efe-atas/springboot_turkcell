@@ -2,6 +2,7 @@ package com.ismail.todoapp.service;
 
 
 import com.ismail.todoapp.dto.auth.AuthRequest;
+import com.ismail.todoapp.dto.auth.AuthResponse;
 import com.ismail.todoapp.entity.User;
 import com.ismail.todoapp.exception.BadRequestException;
 import com.ismail.todoapp.exception.ConflictException;
@@ -33,18 +34,20 @@ public class AuthService {
     }
 
 
-    public String login (AuthRequest request){
+    public AuthResponse login (AuthRequest request){
         // veritabanindan kullaniciyi bul
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("Kullanici bulunamadi: " + request.getUsername()));
 
         // sifre eslesiyor mu
         if(passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            // sifre dogruysa jwt service ile token uret ve don
-            return jwtService.generateToken(user.getUsername());
-        }
-        else
-        {
+            // sifre dogruysa jwt service ile token uret ve DTO ile don
+            String token = jwtService.generateToken(user.getUsername());
+            AuthResponse response = new AuthResponse();
+            response.setAccessToken(token);
+            response.setTokenType("Bearer");
+            return response;
+        } else {
             throw new BadRequestException("Sifre hatali");
         }
 

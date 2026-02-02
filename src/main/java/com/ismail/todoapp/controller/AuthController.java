@@ -1,7 +1,7 @@
 package com.ismail.todoapp.controller;
 
-
 import com.ismail.todoapp.dto.auth.AuthRequest;
+import com.ismail.todoapp.dto.auth.AuthResponse;
 import com.ismail.todoapp.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,7 +52,7 @@ public class AuthController {
                     content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthRequest request){
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request){
         return ResponseEntity.ok(authService.login(request));
     }
 
