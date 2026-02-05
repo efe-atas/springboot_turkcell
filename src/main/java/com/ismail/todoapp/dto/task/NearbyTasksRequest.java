@@ -9,10 +9,10 @@ import lombok.Setter;
 @Schema(description = "Konuma göre yakın görevleri listeleme isteği")
 public class NearbyTasksRequest {
 
-    @Schema(description = "Kullanıcının anlık konumunun enlem bilgisi", example = "41.0082", required = true)
+    @Schema(description = "Kullanıcının anlık konumunun enlem bilgisi", example = "41.0082", requiredMode = Schema.RequiredMode.REQUIRED)
     private double latitude;
 
-    @Schema(description = "Kullanıcının anlık konumunun boylam bilgisi", example = "28.9784", required = true)
+    @Schema(description = "Kullanıcının anlık konumunun boylam bilgisi", example = "28.9784", requiredMode = Schema.RequiredMode.REQUIRED)
     private double longitude;
 
     @Schema(description = "Arama yarıçapı (metre cinsinden). Gönderilmezse varsayılan 500m kullanılır.", example = "500")

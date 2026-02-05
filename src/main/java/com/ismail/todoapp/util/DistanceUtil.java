@@ -8,15 +8,6 @@ public final class DistanceUtil {
         // utility class
     }
 
-    /**
-     * Iki nokta arasindaki yaklasik mesafeyi Haversine formulu ile metre cinsinden hesaplar.
-     *
-     * @param lat1 birinci noktanin enlemi (derece)
-     * @param lon1 birinci noktanin boylami (derece)
-     * @param lat2 ikinci noktanin enlemi (derece)
-     * @param lon2 ikinci noktanin boylami (derece)
-     * @return mesafe (metre)
-     */
     public static double distanceInMeters(double lat1, double lon1, double lat2, double lon2) {
         double latRad1 = Math.toRadians(lat1);
         double latRad2 = Math.toRadians(lat2);
