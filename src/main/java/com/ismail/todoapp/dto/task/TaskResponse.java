@@ -14,6 +14,10 @@ public class TaskResponse {
     private String description;
     private boolean completed;
 
+    private Double latitude;
+    private Double longitude;
+    private Double radiusInMeters;
+
     private Long spaceId;
     private Long createdById;
     private Long assigneeId;

@@ -1,6 +1,7 @@
 package com.ismail.todoapp.controller;
 
 import com.ismail.todoapp.config.StandardAccessErrorResponses;
+import com.ismail.todoapp.dto.task.NearbyTasksRequest;
 import com.ismail.todoapp.dto.task.TaskCreateRequest;
 import com.ismail.todoapp.dto.task.TaskResponse;
 import com.ismail.todoapp.dto.task.TaskUpdateRequest;
@@ -104,6 +105,34 @@ public class TaskController {
             @PathVariable Long taskId,
             @RequestBody TaskUpdateRequest request) {
         return ResponseEntity.ok(taskService.patchTask(spaceId, taskId, request));
+    }
+
+    @Operation(
+            summary = "Konuma göre yakın görevleri listele",
+            description = "Kullanıcının anlık konumuna ve verilen yarıçapa göre, belirtilen çalışma alanındaki yakın görevleri listeler. VIEWER ve üstü yetki gerektirir."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Yakın görevler başarıyla listelendi",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponse.class)))),
+            @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content)
+    })
+    @StandardAccessErrorResponses
+    @PostMapping("/nearby")
+    @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'VIEWER')")
+    public ResponseEntity<List<TaskResponse>> getNearbyTasks(
+            @Parameter(description = "Çalışma alanı ID'si", required = true)
+            @PathVariable Long spaceId,
+            @RequestBody NearbyTasksRequest request) {
+
+        double requestedRadius = request.getRadiusMeters() != null ? request.getRadiusMeters() : 500.0;
+        List<TaskResponse> responses = taskService.findNearbyTasks(
+                spaceId,
+                request.getLatitude(),
+                request.getLongitude(),
+                requestedRadius
+        );
+
+        return ResponseEntity.ok(responses);
     }
 
     @Operation(

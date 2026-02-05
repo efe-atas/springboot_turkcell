@@ -17,5 +17,14 @@ public class TaskUpdateRequest {
 
     @Schema(description = "Görev tamamlanma durumu", example = "true")
     private Boolean completed;
+
+    @Schema(description = "Görevin yapılacağı konumun enlem bilgisi", example = "41.0082")
+    private Double latitude;
+
+    @Schema(description = "Görevin yapılacağı konumun boylam bilgisi", example = "28.9784")
+    private Double longitude;
+
+    @Schema(description = "Bu görev için tetikleme yarıçapı (metre cinsinden)", example = "500")
+    private Double radiusInMeters;
 }
 

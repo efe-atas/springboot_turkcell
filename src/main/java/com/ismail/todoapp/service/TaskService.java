@@ -10,6 +10,7 @@ import com.ismail.todoapp.exception.BadRequestException;
 import com.ismail.todoapp.exception.ResourceNotFoundException;
 import com.ismail.todoapp.repository.SpaceRepository;
 import com.ismail.todoapp.repository.TaskRepository;
+import com.ismail.todoapp.util.DistanceUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +54,9 @@ public class TaskService {
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setLatitude(request.getLatitude());
+        task.setLongitude(request.getLongitude());
+        task.setRadiusInMeters(request.getRadiusInMeters());
         task.setSpace(space);
         task.setCreatedBy(user);
         task.setCompleted(false);
@@ -81,6 +85,15 @@ public class TaskService {
         if (request.getCompleted() != null) {
             existingTask.setCompleted(request.getCompleted());
         }
+        if (request.getLatitude() != null) {
+            existingTask.setLatitude(request.getLatitude());
+        }
+        if (request.getLongitude() != null) {
+            existingTask.setLongitude(request.getLongitude());
+        }
+        if (request.getRadiusInMeters() != null) {
+            existingTask.setRadiusInMeters(request.getRadiusInMeters());
+        }
 
         Task updatedTask = taskRepository.save(existingTask);
         return toTaskResponse(updatedTask);
@@ -98,12 +111,43 @@ public class TaskService {
         taskRepository.delete(task);
     }
 
+    // 5. Kullanici konumuna gore yakin gorevleri bul
+    public List<TaskResponse> findNearbyTasks(Long spaceId, double userLat, double userLon, double requestedRadiusMeters) {
+        // Ilgili space altindaki, konum bilgisi olan gorevleri getir
+        List<Task> tasksWithLocation = taskRepository.findBySpaceIdAndLatitudeIsNotNullAndLongitudeIsNotNull(spaceId);
+
+        return tasksWithLocation.stream()
+                .filter(task -> {
+                    Double taskLat = task.getLatitude();
+                    Double taskLon = task.getLongitude();
+                    if (taskLat == null || taskLon == null) {
+                        return false;
+                    }
+
+                    double distance = DistanceUtil.distanceInMeters(
+                            userLat, userLon,
+                            taskLat, taskLon
+                    );
+
+                    double effectiveRadius = task.getRadiusInMeters() != null
+                            ? task.getRadiusInMeters()
+                            : requestedRadiusMeters;
+
+                    return distance <= effectiveRadius;
+                })
+                .map(this::toTaskResponse)
+                .collect(Collectors.toList());
+    }
+
     private TaskResponse toTaskResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .completed(task.isCompleted())
+                .latitude(task.getLatitude())
+                .longitude(task.getLongitude())
+                .radiusInMeters(task.getRadiusInMeters())
                 .spaceId(task.getSpace() != null ? task.getSpace().getId() : null)
                 .createdById(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null)
                 .assigneeId(task.getAssignee() != null ? task.getAssignee().getId() : null)

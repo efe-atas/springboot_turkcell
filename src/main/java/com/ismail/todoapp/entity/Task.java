@@ -20,6 +20,13 @@ public class Task {
     private String description;
     private boolean completed;
 
+    // Konum bilgisi (opsiyonel)
+    private Double latitude;
+    private Double longitude;
+
+    // Bu gorev icin etkinlik yaricapi (metre cinsinden, opsiyonel)
+    private Double radiusInMeters;
+
     // Space ile iliskiyi JSON'da gosterme - sonsuz donguyu onler
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id", nullable = false)
