@@ -13,6 +13,6 @@ public class AuthRequest {
     private String username;
 
     @Schema(description = "Kullanıcı şifresi", example = "password123", required = true)
-    private String password;
+    private char[] password;
 }
 

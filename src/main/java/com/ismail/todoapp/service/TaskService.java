@@ -115,7 +115,7 @@ public class TaskService {
     public List<TaskResponse> findNearbyTasks(Long spaceId, double userLat, double userLon, double requestedRadiusMeters) {
         // Ilgili space altindaki, konum bilgisi olan gorevleri getir
         List<Task> tasksWithLocation = taskRepository.findBySpaceIdAndLatitudeIsNotNullAndLongitudeIsNotNull(spaceId);
-
+        // taskwithlocation
         return tasksWithLocation.stream()
                 .filter(task -> {
                     Double taskLat = task.getLatitude();

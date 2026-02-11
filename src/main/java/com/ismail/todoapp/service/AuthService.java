@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.nio.CharBuffer;
+import java.util.Arrays;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -25,33 +28,43 @@ public class AuthService {
             throw new ConflictException("Kullanici adi alinmis: " + request.getUsername());
         }
 
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("USER");
-        userRepository.save(user);
-        return "finito";
-    }
+        try {
+            User user = new User();
+            user.setUsername(request.getUsername());
+            user.setPassword(passwordEncoder.encode(CharBuffer.wrap(request.getPassword())));
+            user.setRole("USER");
+            userRepository.save(user); 
+            return "finito";
 
-
-    public AuthResponse login (AuthRequest request){
-        // veritabanindan kullaniciyi bul
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("Kullanici bulunamadi: " + request.getUsername()));
-
-        // sifre eslesiyor mu
-        if(passwordEncoder.matches(request.getPassword(),user.getPassword())){
-            // sifre dogruysa jwt service ile token uret ve DTO ile don
-            String token = jwtService.generateToken(user.getUsername());
-            AuthResponse response = new AuthResponse();
-            response.setAccessToken(token);
-            response.setTokenType("Bearer");
-            return response;
-        } else {
-            throw new BadRequestException("Sifre hatali");
+        } finally {
+            Arrays.fill(request.getPassword(), ' ');
         }
 
+
     }
 
+    public AuthResponse login(AuthRequest request) {
+        try {
+            
+            User user = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new ResourceNotFoundException("Kullanici bulunamadi"));
 
+            
+            if (passwordEncoder.matches(CharBuffer.wrap(request.getPassword()), user.getPassword())) {
+                
+                
+                String token = jwtService.generateToken(user.getUsername());
+                AuthResponse response = new AuthResponse();
+                response.setAccessToken(token);
+                return response;
+
+            } else {
+
+                throw new BadRequestException("Sifre hatali");
+            }
+        } finally {
+
+            Arrays.fill(request.getPassword(), ' ');
+        }
+    }
 }

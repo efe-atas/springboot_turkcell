@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.nio.CharBuffer;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,7 +43,7 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest();
         request.setUsername("ali");
-        request.setPassword("123");
+        request.setPassword(new char[] {'1', '2', '3'});
 
         when(userRepository.findByUsername("ali")).thenReturn(Optional.of(new User()));
 
@@ -58,10 +59,10 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest();
         request.setUsername("ali");
-        request.setPassword("123");
+        request.setPassword(new char[] {'1', '2', '3'});
 
         when(userRepository.findByUsername("ali")).thenReturn(Optional.empty());
-        when(passwordEncoder.encode("123")).thenReturn("encoded");
+        when(passwordEncoder.encode(CharBuffer.wrap(new char[] {'1', '2', '3'}))).thenReturn("encoded");
 
         // when
         String result = authService.register(request);
@@ -77,7 +78,7 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest();
         request.setUsername("ali");
-        request.setPassword("123");
+        request.setPassword(new char[] {'1', '2', '3'});
 
         when(userRepository.findByUsername("ali")).thenReturn(Optional.empty());
 
@@ -91,14 +92,14 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest();
         request.setUsername("ali");
-        request.setPassword("123");
+        request.setPassword(new char[] {'1', '2', '3'});
 
         User user = new User();
         user.setUsername("ali");
         user.setPassword("encoded");
 
         when(userRepository.findByUsername("ali")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("123", "encoded")).thenReturn(true);
+        when(passwordEncoder.matches(CharBuffer.wrap(new char[] {'1', '2', '3'}), "encoded")).thenReturn(true);
         when(jwtService.generateToken("ali")).thenReturn("token123");
 
         // when
@@ -115,14 +116,14 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest();
         request.setUsername("ali");
-        request.setPassword("123");
+        request.setPassword(new char[] {'1', '2', '3'});
 
         User user = new User();
         user.setUsername("ali");
         user.setPassword("encoded");
 
         when(userRepository.findByUsername("ali")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("123", "encoded")).thenReturn(false);
+        when(passwordEncoder.matches(CharBuffer.wrap(new char[] {'1', '2', '3'}), "encoded")).thenReturn(false);
 
         // when & then
         assertThrows(BadRequestException.class, () -> authService.login(request));

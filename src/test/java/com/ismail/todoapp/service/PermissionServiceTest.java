@@ -58,7 +58,7 @@ class PermissionServiceTest {
     }
 
     @Test
-    @DisplayName("hasSpaceAccess: OWNER sadece OWNER'a erisebilmeli")
+    @DisplayName("hasSpaceAccess: OWNER sadece her role erisebilmeli")
     void hasSpaceAccess_ownerIcin() {
         // given
         Long spaceId = 1L;

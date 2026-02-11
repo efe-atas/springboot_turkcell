@@ -26,7 +26,7 @@ public class User implements UserDetails {
     private String username;
 
     @Column(name = "password")
-    private String password;
+    private String password; // bu yaklasim dogru mu degilse neden yanlis ne yapabiliriz riskleri nelerdir
 
     private String role;
 
@@ -36,7 +36,7 @@ public class User implements UserDetails {
     }
 
     @Override
-    public @Nullable String getPassword() {
+    public String getPassword() {
         return this.password;
     }
 
