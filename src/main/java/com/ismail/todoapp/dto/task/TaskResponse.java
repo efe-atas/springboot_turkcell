@@ -17,6 +17,7 @@ public class TaskResponse {
     private Double latitude;
     private Double longitude;
     private Double radiusInMeters;
+    private String imageUrl;
 
     private Long spaceId;
     private Long createdById;

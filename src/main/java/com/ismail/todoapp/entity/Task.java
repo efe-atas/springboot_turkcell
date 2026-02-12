@@ -27,6 +27,9 @@ public class Task {
   
     private Double radiusInMeters;
 
+    private String imageKey;
+    private String imageUrl;
+
     // Space ile iliskiyi JSON'da gosterme - sonsuz donguyu onler
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "space_id", nullable = false)

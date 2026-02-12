@@ -26,5 +26,8 @@ public class TaskUpdateRequest {
 
     @Schema(description = "Bu görev için tetikleme yarıçapı (metre cinsinden)", example = "500")
     private Double radiusInMeters;
+
+    private String imageKey;
+
 }
 
