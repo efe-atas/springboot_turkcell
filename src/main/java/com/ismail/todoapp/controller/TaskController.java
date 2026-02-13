@@ -96,6 +96,7 @@ public class TaskController {
 
 
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resim basariyla yuklendi", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))), @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),})
+    @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
     @StandardAccessErrorResponses
     @PostMapping(value = "/{taskId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity <TaskResponse> uploadImage(

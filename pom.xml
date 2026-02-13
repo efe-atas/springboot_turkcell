@@ -97,6 +97,14 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-vault-config</artifactId>
+            <version>4.1.0</version> 
+        </dependency>
+
+
+
         <!-- Swagger UI / OpenAPI (2.4.0 Spring Boot 3.2.x ile uyumlu) -->
         <dependency>
             <groupId>org.springdoc</groupId>
