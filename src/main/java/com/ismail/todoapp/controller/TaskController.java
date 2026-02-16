@@ -5,8 +5,9 @@ import com.ismail.todoapp.dto.task.NearbyTasksRequest;
 import com.ismail.todoapp.dto.task.TaskCreateRequest;
 import com.ismail.todoapp.dto.task.TaskResponse;
 import com.ismail.todoapp.dto.task.TaskUpdateRequest;
-import com.ismail.todoapp.entity.Task;
+import com.ismail.todoapp.service.RateLimitingService;
 import com.ismail.todoapp.service.TaskService;
+import com.ismail.todoapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +36,8 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
+    private final RateLimitingService rateLimitingService;
+    private final UserService userService;
 
     @Operation(summary = "Görevleri listele", description = "Belirtilen çalışma alanındaki tüm görevleri listeler. VIEWER ve üstü yetki gerektirir.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Görevler başarıyla listelendi", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponse.class))))})
@@ -95,14 +100,22 @@ public class TaskController {
 
 
 
-    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resim basariyla yuklendi", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))), @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),})
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Resim basariyla yuklendi", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))), @ApiResponse(responseCode = "400", description = "Geçersiz istek verisi", content = @Content),@ApiResponse(responseCode = "429", description = "Çok fazla istek", content = @Content)})
     @PreAuthorize("@permissionService.hasSpaceAccess(#spaceId, 'EDITOR')")
     @StandardAccessErrorResponses
     @PostMapping(value = "/{taskId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity <TaskResponse> uploadImage(
             @PathVariable Long taskId,
             @Parameter MultipartFile file, @PathVariable Long spaceId) throws IOException {
-        return ResponseEntity.ok(taskService.uploadTaskImage(spaceId,taskId,file));
+            String key = userService.getCurrentUser().getUsername();
+            if(rateLimitingService.tryConsume(key,1)){
+                return ResponseEntity.ok(taskService.uploadTaskImage(spaceId,taskId,file));
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+            }
+
+
     }
 
 

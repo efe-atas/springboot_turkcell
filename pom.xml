@@ -103,6 +103,11 @@
             <version>4.1.0</version> 
         </dependency>
 
+        <dependency>
+            <groupId>com.bucket4j</groupId>
+            <artifactId>bucket4j-core</artifactId>
+            <version>8.10.0</version>
+        </dependency>
 
 
         <!-- Swagger UI / OpenAPI (2.4.0 Spring Boot 3.2.x ile uyumlu) -->
