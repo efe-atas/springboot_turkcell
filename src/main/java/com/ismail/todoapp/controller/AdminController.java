@@ -77,7 +77,6 @@ public class AdminController {
                 .completed(task.isCompleted())
                 .spaceId(task.getSpace() != null ? task.getSpace().getId() : null)
                 .createdById(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null)
-                .assigneeId(task.getAssignee() != null ? task.getAssignee().getId() : null)
                 .build();
     }
 }

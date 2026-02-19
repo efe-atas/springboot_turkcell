@@ -28,6 +28,7 @@ public class TaskService {
     private final SpaceRepository spaceRepository;
     private final UserService userService;
     private final StorageService storageService;
+    private final GeocodingService geocodingService;
 
     // 1. Bir Space icindeki tum gorevleri getir
     public List<TaskResponse> getTasksBySpaceId(Long spaceId) {
@@ -153,7 +154,24 @@ public class TaskService {
 
 
     private TaskResponse toTaskResponse(Task task) {
-        return TaskResponse.builder().id(task.getId()).title(task.getTitle()).description(task.getDescription()).completed(task.isCompleted()).latitude(task.getLatitude()).longitude(task.getLongitude()).radiusInMeters(task.getRadiusInMeters()).spaceId(task.getSpace() != null ? task.getSpace().getId() : null).createdById(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null).assigneeId(task.getAssignee() != null ? task.getAssignee().getId() : null).imageUrl(task.getImageUrl() != null ? task.getImageUrl() : null).build();
+        String address = null;
+        if (task.getLatitude() != null && task.getLongitude() != null) {
+            address = geocodingService.reverseGeocode(task.getLatitude(), task.getLongitude()).orElse(null);
+        }
+        
+        return TaskResponse.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .completed(task.isCompleted())
+                .latitude(task.getLatitude())
+                .longitude(task.getLongitude())
+                .radiusInMeters(task.getRadiusInMeters())
+                .spaceId(task.getSpace() != null ? task.getSpace().getId() : null)
+                .createdById(task.getCreatedBy() != null ? task.getCreatedBy().getId() : null)
+                .imageUrl(getUrl(task))
+                .address(address)
+                .build();
     }
 
     private String getUrl(Task task) {

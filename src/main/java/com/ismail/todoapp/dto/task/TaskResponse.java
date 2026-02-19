@@ -18,9 +18,9 @@ public class TaskResponse {
     private Double longitude;
     private Double radiusInMeters;
     private String imageUrl;
+    private String address;
 
     private Long spaceId;
     private Long createdById;
-    private Long assigneeId;
 }
 
